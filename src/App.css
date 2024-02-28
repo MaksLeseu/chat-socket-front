@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+}
+
+.chat {
+  border: 1px solid black;
+  padding: 10px;
+  height: 300px;
+  width: 300px;
+  overflow-y: scroll;
+  margin: 100px auto 50px auto;
+}
+
+.textarea {
+  margin-right: 20px;
+}
+
+.max {
+  margin-bottom: 50px;
+}
