@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import {io} from "socket.io-client";
 
-type MessagesType = MessageType[]
+type MessagesType = MessageType[] | []
 
 type MessageType = {
   message: string, id: string, user: {id: string, name: string}
@@ -33,26 +33,22 @@ function App() {
   }, [])
 
   const [messages, setMessages] = useState<MessagesType>([])
+  const [message, setMessage] = useState<string>('')
+  const [name, setName] = useState<string>('')
+  const [sentName, setSentName] = useState<boolean>(false)
 
-  const [messageMax, setMessageMax] = useState<string>('')
-  const [messageDimych, setMessageDimych] = useState<string>('')
-
-  const sendMessageHandler = (params: 'max' | 'dimych') => {
-    const obj = {
-      'max': () => {
-        if (messageMax.trim().length !== 0) {
-          socket.emit('client-message-sent-max', messageMax)
-          setMessageMax('')
-        }
-      },
-      'dimych': () => {
-        if (messageDimych.trim().length !== 0) {
-          socket.emit('client-message-sent-dimych', messageDimych)
-          setMessageDimych('')
-        }
-      }
+  const sendMessageHandler = () => {
+    if (message.trim().length !== 0) {
+      socket.emit('client-message-sent', message)
+      setMessage('')
     }
-    obj[params]()
+  }
+
+  const sendNameHandler = () => {
+    if (name.trim().length !== 0) {
+      socket.emit('client-name-sent', name)
+      setSentName(true)
+    }
   }
 
   return (
@@ -60,24 +56,21 @@ function App() {
       <div className={'chat'}>
         {messages.map((m, id) => {
           return (
-              <div key={id}>
-                <b>{m.user.name}</b> {m.message}
-                  <hr/>
+              <div key={id} className={'messagesContainer'}>
+                <p>{m.user.name}:</p> {m.message}
               </div>
           )
         })}
       </div>
-        <div className={'max'}>
-
-          Max
-          <textarea className={'textarea'} value={messageMax} onChange={(e) => setMessageMax(e.currentTarget.value)}></textarea>
-          <button onClick={() => sendMessageHandler('max')}>Send</button>
+        <div className={'inputContainer'}>
+          <p>{sentName && `The name was set.`}</p>
+          <input value={name} placeholder={'name'} onChange={(e) => setName(e.currentTarget.value)}/>
+          <button onClick={sendNameHandler}>Send name.</button>
         </div>
-      <div>
-        Dimych
-        <textarea className={'textarea'} value={messageDimych} onChange={(e) => setMessageDimych(e.currentTarget.value)}></textarea>
-        <button onClick={() => sendMessageHandler('dimych')}>Send</button>
-      </div>
+        <div className={'textareaContainer'}>
+          <textarea className={'textarea'} placeholder={'message'} value={message} onChange={(e) => setMessage(e.currentTarget.value)}></textarea>
+          <button disabled={!sentName} onClick={sendMessageHandler}>Send</button>
+        </div>
     </div>
   );
 }

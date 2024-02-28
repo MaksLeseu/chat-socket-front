@@ -9,12 +9,38 @@
   width: 300px;
   overflow-y: scroll;
   margin: 100px auto 50px auto;
+  font-size: 15px;
+}
+
+.messagesContainer {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px black solid;
+  width: 280px;
+}
+.messagesContainer p {
+  font-size: 15px;
+  font-weight: 700;
+  margin-right: 10px;
 }
 
 .textarea {
   margin-right: 20px;
 }
 
-.max {
+.inputContainer {
   margin-bottom: 50px;
+}
+.inputContainer input {
+  margin-right: 10px;
+}
+.inputContainer p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.textareaContainer {
+  display: flex;
+  justify-content: center;
 }
