@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {io} from "socket.io-client";
 
@@ -37,6 +37,12 @@ function App() {
   const [name, setName] = useState<string>('')
   const [sentName, setSentName] = useState<boolean>(false)
 
+  useEffect(() => {
+    messagesAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+  }, [messages])
+
+  const messagesAnchorRef = useRef<any>(null)
+
   const sendMessageHandler = () => {
     if (message.trim().length !== 0) {
       socket.emit('client-message-sent', message)
@@ -61,6 +67,7 @@ function App() {
               </div>
           )
         })}
+        <div ref={messagesAnchorRef}></div>
       </div>
         <div className={'inputContainer'}>
           <p>{sentName && `The name was set.`}</p>
