@@ -1,38 +1,22 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
-import {io} from "socket.io-client";
-
-type MessagesType = MessageType[] | []
-
-type MessageType = {
-  message: string, id: string, user: {id: string, name: string}
-}
-
-const socket = io('http://localhost:3009/')
+import {Provider, useDispatch, useSelector} from "react-redux";
+import {chatReducer, createConnection, destroyConnection, setClientMessage, setClientName} from "./chat-reducer";
+import {combineReducers, legacy_createStore} from "redux";
+import {AppRootStateType} from "./index";
 
 function App() {
 
+  const dispatch = useDispatch()
+  const messages = useSelector((state: AppRootStateType) => state.chat.messages)
+
   useEffect(() => {
-    socket.on('init-messages-published', (messages) => {
-      setMessages(messages)
-    })
+    dispatch(createConnection())
     return () => {
-      socket.off('new-massage-sent')
+      dispatch(destroyConnection())
     }
   }, [])
 
-  useEffect(() => {
-    const handleNewMessage = (message: any) => {
-      setMessages((messages) => [...messages, message])
-    }
-    socket.on('new-massage-sent', handleNewMessage)
-
-    return () => {
-      socket.off('new-massage-sent', handleNewMessage)
-    }
-  }, [])
-
-  const [messages, setMessages] = useState<MessagesType>([])
   const [message, setMessage] = useState<string>('')
   const [name, setName] = useState<string>('')
   const [sentName, setSentName] = useState<boolean>(false)
@@ -45,30 +29,30 @@ function App() {
 
   const sendMessageHandler = () => {
     if (message.trim().length !== 0) {
-      socket.emit('client-message-sent', message)
+      dispatch(setClientMessage(message))
       setMessage('')
     }
   }
 
   const sendNameHandler = () => {
     if (name.trim().length !== 0) {
-      socket.emit('client-name-sent', name)
+      dispatch(setClientName(name))
       setSentName(true)
     }
   }
 
   return (
-    <div className="App">
-      <div className={'chat'}>
-        {messages.map((m, id) => {
-          return (
-              <div key={id} className={'messagesContainer'}>
-                <p>{m.user.name}:</p> {m.message}
-              </div>
-          )
-        })}
-        <div ref={messagesAnchorRef}></div>
-      </div>
+      <div className="App">
+        <div className={'chat'}>
+          {messages.map((m: any, id: any) => {
+            return (
+                <div key={id} className={'messagesContainer'}>
+                  <p>{m.user.name}:</p> {m.message}
+                </div>
+            )
+          })}
+          <div ref={messagesAnchorRef}></div>
+        </div>
         <div className={'inputContainer'}>
           <p>{sentName && `The name was set.`}</p>
           <input value={name} placeholder={'name'} onChange={(e) => setName(e.currentTarget.value)}/>
@@ -78,7 +62,7 @@ function App() {
           <textarea className={'textarea'} placeholder={'message'} value={message} onChange={(e) => setMessage(e.currentTarget.value)}></textarea>
           <button disabled={!sentName} onClick={sendMessageHandler}>Send</button>
         </div>
-    </div>
+      </div>
   );
 }
 
