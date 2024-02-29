@@ -1,7 +1,5 @@
 import {io} from "socket.io-client";
 
-const socket = io('http://localhost:3009/')
-
 export const api = {
     socket: null as null | any,
     createConnection() {
@@ -23,24 +21,3 @@ export const api = {
         this.socket.emit('client-message-sent', message)
     }
 }
-
-
-/*useEffect(() => {
-    socket.on('init-messages-published', (messages) => {
-      setMessages(messages)
-    })
-    return () => {
-      socket.off('new-massage-sent')
-    }
-  }, [])
-
-  useEffect(() => {
-    const handleNewMessage = (message: any) => {
-      setMessages((messages) => [...messages, message])
-    }
-    socket.on('new-massage-sent', handleNewMessage)
-
-    return () => {
-      socket.off('new-massage-sent', handleNewMessage)
-    }
-  }, [])*/

@@ -25,7 +25,7 @@ export const createConnection = (): any => (dispatch: any) => {
     api.subscribe((messages: any) => {
             dispatch(messagesReceived(messages))
         },
-        (message: any) => {
+        (message: string) => {
             dispatch(newMessageReceived(message))
         })
 }

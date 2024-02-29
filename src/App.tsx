@@ -1,12 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
-import {Provider, useDispatch, useSelector} from "react-redux";
-import {chatReducer, createConnection, destroyConnection, setClientMessage, setClientName} from "./chat-reducer";
-import {combineReducers, legacy_createStore} from "redux";
+import {useDispatch, useSelector} from "react-redux";
+import {createConnection, destroyConnection, setClientMessage, setClientName} from "./chat-reducer";
 import {AppRootStateType} from "./index";
 
 function App() {
-
   const dispatch = useDispatch()
   const messages = useSelector((state: AppRootStateType) => state.chat.messages)
 
